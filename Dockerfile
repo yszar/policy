@@ -1,5 +1,7 @@
 FROM python:3.6-slim
 ADD . /code
+ADD GBK-EUC-H.pickle.gz /usr/local/lib/python3.6/site-packages/pdfminer/cmap/
+ADD to-unicode-Adobe-GB1.pickle.gz /usr/local/lib/python3.6/site-packages/pdfminer/cmap/
 WORKDIR /code
 #COPY ./sc /etc/scrapyd/
 #COPY run.sh /usr/bin/run.sh

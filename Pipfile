@@ -10,7 +10,6 @@ openpyxl = "*"
 pandas = "*"
 xlrd = "*"
 pyocr = "*"
-wand = "*"
 
 [dev-packages]
 

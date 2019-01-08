@@ -1,25 +1,25 @@
 import os
 import re
-import pandas as pd
+# import pandas as pd
 import csv
 import itertools
-import pyocr
-import pyocr.builders
-import io
-import operator
-import datetime
+# import pyocr
+# import pyocr.builders
+# import io
+# import operator
+# import datetime
 # import multiprocessing
 from policy.param import *
 from subprocess import call
-from multiprocessing import Pool
-from functools import cmp_to_key
-from wand.image import Image
-from PIL import Image as PI
+# from multiprocessing import Pool
+# from functools import cmp_to_key
+# from wand.image import Image
+# from PIL import Image as PI
 from pdfminer.pdfparser import PDFParser, PDFDocument
 from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
 from pdfminer.converter import PDFPageAggregator
 from pdfminer.layout import LTTextBoxHorizontal, LAParams
-from pdfminer.pdfinterp import PDFTextExtractionNotAllowed
+# from pdfminer.pdfinterp import PDFTextExtractionNotAllowed
 
 
 def splitdate(s):

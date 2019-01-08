@@ -11,4 +11,4 @@ RUN apt-get update && apt-get -y install gcc \
     #-i https://mirrors.ali    yun.com/pypi/simple/ \
     && rm -rf ~/.cache/pip
  #ENTRYPOINT /usr/bin/run.sh
-CMD ["python" "entrypoint.py"]
+CMD ["python", "entrypoint.py"]

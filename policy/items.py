@@ -13,6 +13,6 @@ class PolicyItem(scrapy.Item):
     # name = scrapy.Field()
     file_url = scrapy.Field()  # 指定文件下载的连接
     file = scrapy.Field()  # 文件下载完成后会往里面写相关的信息
-    src_contents = scrapy.Field()  # 文件分类存储路径
+    # src_contents = scrapy.Field()  # 文件分类存储路径
     filename = scrapy.Field()  # 文件名
 

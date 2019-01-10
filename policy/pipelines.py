@@ -25,7 +25,7 @@ class MyFilesPipeline(FilesPipeline):
     def file_path(self, request, response=None, info=None):
         # path = urlparse(request.url).path
         item = request.meta['item']  # 通过meta把item值传递过来
-        src_contents = item['src_contents']  # 获取目录名
+        # src_contents = item['src_contents']  # 获取目录名
         filename = item['filename']   # 获取文件名
 
-        return join(src_contents, filename)
+        return join(filename)

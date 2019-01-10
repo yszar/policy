@@ -199,7 +199,8 @@ def parse(filename):
         # except FileNotFoundError:
         #     pass
         # 循环遍历列表，每次处理一个page的内容
-    except:
+    except Warning as e:
+        print(e)
         print(fp.name + 'Do not provide txt conversion',
               'change to Tencent ocr identification')
         print('Start converting', fp.name, 'to image')

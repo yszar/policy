@@ -13,9 +13,9 @@ import policy.pdftotext
 
 
 class CninfoSpider(scrapy.Spider):
-    def __init__(self):
-        dispatcher.connect(policy.pdftotext.runall, signals.engine_stopped)
-        # dispatcher.connect(policy.pdftotext.runall, signals.spider_closed)
+    # def __init__(self):
+    #     dispatcher.connect(policy.pdftotext.runall, signals.engine_stopped)
+    #     # dispatcher.connect(policy.pdftotext.runall, signals.spider_closed)
 
     name = 'cninfo'
     allowed_domains = ['cninfo.com.cn']
@@ -26,6 +26,12 @@ class CninfoSpider(scrapy.Spider):
     #                                  'A8%8B&sdate=&edate=&isfulltext=false&sortName=' \
     #                                  'nothing&sortType=desc'
     # ]
+
+    @classmethod
+    def from_crawler(cls, crawler, *args, **kwargs):
+        spider = super(CninfoSpider, cls).from_crawler(crawler, *args, **kwargs)
+        crawler.signals.connect(policy.pdftotext.runall, signals.engine_stopped)
+        return spider
 
     def start_requests(self):
         getfile = xlrd.open_workbook(XLSX)

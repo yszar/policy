@@ -58,8 +58,10 @@ def imgtotxt(imglist):
 
 def convert_pdf_to_jpg(filename):
     import shutil
-    shutil.rmtree(os.path.join(os.getcwd(), 'policy', 'image'))
-    os.mkdir(os.path.join(os.getcwd(), 'policy', 'image'))
+    try:
+        shutil.rmtree(os.path.join(os.getcwd(), 'policy', 'image'))
+    except FileNotFoundError:
+        os.mkdir(os.path.join(os.getcwd(), 'policy', 'image'))
     imgpath = os.path.join(os.getcwd(), 'policy', 'image')
     end_length = len(filename.split('.')[-1]) + 1
     title = filename[0:-end_length]

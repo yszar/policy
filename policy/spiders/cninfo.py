@@ -15,7 +15,7 @@ import policy.pdftotext
 class CninfoSpider(scrapy.Spider):
     def __init__(self):
         dispatcher.connect(policy.pdftotext.runall, signals.engine_stopped)
-        dispatcher.connect(policy.pdftotext.runall, signals.spider_closed)
+        # dispatcher.connect(policy.pdftotext.runall, signals.spider_closed)
 
     name = 'cninfo'
     allowed_domains = ['cninfo.com.cn']

@@ -420,7 +420,12 @@ def run():
         writer.writerows(res_good)
 
 
-if __name__ == '__main__':
-    # pdfocr()
+def runall():
     delpdf()
     run()
+
+
+if __name__ == '__main__':
+    # pdfocr()
+    # delpdf()
+    runall()

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 import re
 # import pandas as pd
@@ -167,8 +168,9 @@ def parse(filename):
         if not doc.is_extractable:
             raise PDFTextExtractionNotAllowed
     except:
-        print(fp.name + ' 不提供提供txt转换', '改用腾讯ocr识别')
-        print('开始将', fp.name, '转换为图片')
+        print(fp.name + 'Do not provide txt conversion',
+              'change to Tencent ocr identification')
+        print('Start converting', fp.name, 'to image')
         txt = imgtotxt(convert_pdf_to_jpg(fp.name))
     # except Warning:
     #     print(fp.name, '捕获到警告', '改用腾讯ocr识别')

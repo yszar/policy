@@ -270,7 +270,7 @@ def parse(filename):
                 GPnum = 1
                 break
                 # GPindex = terms_list.index(term)
-    print(filename, '分析完成')
+    print(filename, 'analysis completed')
     return filename.split('.')[0].split('_')[0], \
            filename.split('.')[0].split('_')[
                1], CVnum, SBnum, TLnum, SLnum, QEnum, AMnum, GPnum
@@ -290,7 +290,8 @@ def delpdf():
             if code_list[i][7:11] == code_list[i + 1][7:11]:
                 min_year = min(code_list[i], code_list[i + 1])
                 os.remove(os.path.join('pdfs', min_year))
-                print('同一年多章程,删除:', min_year)
+                print('Multiple regulations in the same year, delete:',
+                      min_year)
             # year_list = 1
 
 
@@ -363,7 +364,7 @@ def delpdf():
 #             else:
 #                 writer.writerow(csv_ros)
 #             print(codename + ' 文件夹pdf转换txt结束')
-#     print('所有文件夹pdf转txt结束')
+    print('All pdf analysis is complete!')
 
 def run():
     # import random  # test

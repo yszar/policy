@@ -183,7 +183,8 @@ def parse(filename):
     #     return
     # except AttributeError:
     #     os.remove(path)
-    else:
+    # else:
+    try:
         # 创建PDf 资源管理器 来管理共享资源
         rsrcmgr = PDFResourceManager()
         # 创建一个PDF设备对象
@@ -198,6 +199,12 @@ def parse(filename):
         # except FileNotFoundError:
         #     pass
         # 循环遍历列表，每次处理一个page的内容
+    except:
+        print(fp.name + 'Do not provide txt conversion',
+              'change to Tencent ocr identification')
+        print('Start converting', fp.name, 'to image')
+        txt = imgtotxt(convert_pdf_to_jpg(fp.name))
+    else:
         txt = ""
         for page in doc.get_pages():  # doc.get_pages() 获取page列表
             interpreter.process_page(page)

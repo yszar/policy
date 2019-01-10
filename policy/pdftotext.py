@@ -374,7 +374,7 @@ def delpdf():
 #             else:
 #                 writer.writerow(csv_ros)
 #             print(codename + ' 文件夹pdf转换txt结束')
-    print('All pdf analysis is complete!')
+#     print('All pdf analysis is complete!')
 
 def run():
     # import random  # test
@@ -408,18 +408,21 @@ def run():
                             int(code_good[n + d + 1][1][:4]) + 1)
                         tuple(code_good[n + d + 1])
         res_good.append(code_good[0])
+    print('All pdf analysis is complete!')
 
     # try:
     #     os.remove(r'res.csv')
     # except:
     #     pass
+    print('Start writing to res.csv')
     with open("res.csv", "w") as csvfile:
         writer = csv.writer(csvfile)
         # 先写入columns_name
         writer.writerow(
             ["code", "date", "CV", "SB", 'TL', 'SL', 'QE', 'AM', 'GP'])
         writer.writerows(res_good)
-
+    print('Write completion')
+    
 
 def runall():
     delpdf()

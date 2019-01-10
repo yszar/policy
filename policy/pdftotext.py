@@ -12,17 +12,17 @@ import itertools
 # import datetime
 # import multiprocessing
 from policy.param import *
-from subprocess import call
+# from subprocess import call
 # from multiprocessing import Pool
 # from functools import cmp_to_key
 # from wand.image import Image
 # from PIL import Image as PI
 from qqai.vision.ocr import GeneralOCR
-from pdfminer.pdfparser import PDFParser, PDFDocument
-from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
-from pdfminer.converter import PDFPageAggregator
-from pdfminer.layout import LTTextBoxHorizontal, LAParams
-from pdfminer.pdfinterp import PDFTextExtractionNotAllowed
+# from pdfminer.pdfparser import PDFParser, PDFDocument
+# from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
+# from pdfminer.converter import PDFPageAggregator
+# from pdfminer.layout import LTTextBoxHorizontal, LAParams
+# from pdfminer.pdfinterp import PDFTextExtractionNotAllowed
 from PIL import Image as Image2
 from wand.image import Image
 from wand.color import Color
@@ -47,8 +47,12 @@ def imgtotxt(imglist):
         with open(img, 'rb') as image_file:
             ret = 1
             while ret != 0:
-                result = robot.run(image_file)
-                ret = result['ret']
+                try:
+                    result = robot.run(image_file)
+                except:
+                    continue
+                else:
+                    ret = result['ret']
             for item in result['data']['item_list']:
                 itemstring = item['itemstring']
                 ocrstr.join(itemstring)
@@ -60,6 +64,7 @@ def convert_pdf_to_jpg(filename):
     import shutil
     try:
         shutil.rmtree(os.path.join(os.getcwd(), 'policy', 'image'))
+        os.mkdir(os.path.join(os.getcwd(), 'policy', 'image'))
     except FileNotFoundError:
         os.mkdir(os.path.join(os.getcwd(), 'policy', 'image'))
     imgpath = os.path.join(os.getcwd(), 'policy', 'image')
@@ -147,89 +152,91 @@ def convert_pdf_to_jpg(filename):
 
 def parse(filename):
     path = os.path.join('pdfs', filename)
-    fp = open(path, 'rb')  # 以二进制读模式打开
-    try:
-        # 用文件对象来创建一个pdf文档分析器
-        praser = PDFParser(fp)
-        # 创建一个PDF文档
-        doc = PDFDocument()
-        # 连接分析器 与文档对象
-        praser.set_document(doc)
-        # try:
-        doc.set_parser(praser)
-        # except:
-        #     print(filename)
-        # 提供初始化密码
-        # 如果没有密码 就创建一个空的字符串
-        # try:
-        doc.initialize()
-        # except:
-        #     call('qpdf --password=%s --decrypt %s %s' % (
-        #         '', path, path), shell=True)
-        # try:
-        if not doc.is_extractable:
-            raise PDFTextExtractionNotAllowed
-    except:
-        print(fp.name + 'Do not provide txt conversion',
-              'change to Tencent ocr identification')
-        print('Start converting', fp.name, 'to image')
-        txt = imgtotxt(convert_pdf_to_jpg(fp.name))
+    # fp = open(path, 'rb')  # 以二进制读模式打开
+    # try:
+    #     # 用文件对象来创建一个pdf文档分析器
+    #     praser = PDFParser(fp)
+    #     # 创建一个PDF文档
+    #     doc = PDFDocument()
+    #     # 连接分析器 与文档对象
+    #     praser.set_document(doc)
+    #     # try:
+    #     doc.set_parser(praser)
+    #     # except:
+    #     #     print(filename)
+    #     # 提供初始化密码
+    #     # 如果没有密码 就创建一个空的字符串
+    #     # try:
+    #     doc.initialize()
+    #     # except:
+    #     #     call('qpdf --password=%s --decrypt %s %s' % (
+    #     #         '', path, path), shell=True)
+    #     # try:
+    #     if not doc.is_extractable:
+    #         raise PDFTextExtractionNotAllowed
+    # except:
+    #     print(fp.name + 'Do not provide txt conversion',
+    #           'change to Tencent ocr identification')
+    #     print('Start converting', fp.name, 'to image')
+    #     txt = imgtotxt(convert_pdf_to_jpg(fp.name))
     # except Warning:
     #     print(fp.name, '捕获到警告', '改用腾讯ocr识别')
     #     print('开始将', fp.name, '转换为图片')
     #     txt = imgtotxt(convert_pdf_to_jpg(fp.name))
 
-    #     os.remove(path)
-    #     return
-    # except AttributeError:
-    #     os.remove(path)
+    # #     os.remove(path)
+    # #     return
+    # # except AttributeError:
+    # #     os.remove(path)
+    # # else:
+    # try:
+    #     # 创建PDf 资源管理器 来管理共享资源
+    #     rsrcmgr = PDFResourceManager()
+    #     # 创建一个PDF设备对象
+    #     laparams = LAParams()
+    #     device = PDFPageAggregator(rsrcmgr, laparams=laparams)
+    #     # 创建一个PDF解释器对象
+    #     interpreter = PDFPageInterpreter(rsrcmgr, device)
+    #
+    #     # try:
+    #     #     os.remove(r'./pdfs/' + codename + '/' + filename.replace(
+    #     #         'pdf', 'txt'))
+    #     # except FileNotFoundError:
+    #     #     pass
+    #     # 循环遍历列表，每次处理一个page的内容
+    # except Warning as e:
+    #     print(e)
+    # print(fp.name + 'Do not provide txt conversion',
+    #       'change to Tencent ocr identification')
+    # print('Start converting', fp.name, 'to image')
+    print('开始提取文字:', filename)
+    txt = imgtotxt(convert_pdf_to_jpg(path))
+    print('提取结束,开始分析:', filename)
     # else:
-    try:
-        # 创建PDf 资源管理器 来管理共享资源
-        rsrcmgr = PDFResourceManager()
-        # 创建一个PDF设备对象
-        laparams = LAParams()
-        device = PDFPageAggregator(rsrcmgr, laparams=laparams)
-        # 创建一个PDF解释器对象
-        interpreter = PDFPageInterpreter(rsrcmgr, device)
-
-        # try:
-        #     os.remove(r'./pdfs/' + codename + '/' + filename.replace(
-        #         'pdf', 'txt'))
-        # except FileNotFoundError:
-        #     pass
-        # 循环遍历列表，每次处理一个page的内容
-    except Warning as e:
-        print(e)
-        print(fp.name + 'Do not provide txt conversion',
-              'change to Tencent ocr identification')
-        print('Start converting', fp.name, 'to image')
-        txt = imgtotxt(convert_pdf_to_jpg(fp.name))
-    else:
-        txt = ""
-        for page in doc.get_pages():  # doc.get_pages() 获取page列表
-            interpreter.process_page(page)
-            # 接受该页面的LTPage对象
-            layout = device.get_result()
-            """ 
-            这里layout是一个LTPage对象 里面存放着 这个page解析出的各种对象 一般包括LTTextBox, LTFigure, 
-            LTImage, LTTextBoxHorizontal 等等 想要获取文本就获得对象的text属性
-            """
-            for x in layout:
-                if isinstance(x, LTTextBoxHorizontal):
-                    # with open(r'./pdfs/test.txt', 'a') as f:
-                    results = x.get_text()
-                    #     # print(results)
-                    #     f.write(results + '\n')
-                    txt += results
-            # for x in layout:
-            #     if isinstance(x, LTTextBoxHorizontal):
-            #         with open(r'./pdfs/' + codename + '/' + filename.replace(
-            #                 'pdf', 'txt'), 'a') as f:
-            #             results = x.get_text()
-            #             # print(results)
-            #             f.write(results + '\n')
-        # print('转换完成:', f.name)
+    #     txt = ""
+    #     for page in doc.get_pages():  # doc.get_pages() 获取page列表
+    #         interpreter.process_page(page)
+    #         # 接受该页面的LTPage对象
+    #         layout = device.get_result()
+    #         """
+    #         这里layout是一个LTPage对象 里面存放着 这个page解析出的各种对象 一般包括LTTextBox, LTFigure,
+    #         LTImage, LTTextBoxHorizontal 等等 想要获取文本就获得对象的text属性
+    #         """
+    #         for x in layout:
+    #             if isinstance(x, LTTextBoxHorizontal):
+    #                 # with open(r'./pdfs/test.txt', 'a') as f:
+    #                 results = x.get_text()
+    #                 #     # print(results)
+    #                 #     f.write(results + '\n')
+    #                 txt += results
+    #         # for x in layout:
+    #         #     if isinstance(x, LTTextBoxHorizontal):
+    #         #         with open(r'./pdfs/' + codename + '/' + filename.replace(
+    #         #                 'pdf', 'txt'), 'a') as f:
+    #         #             results = x.get_text()
+    #         #             # print(results)
+    #         #             f.write(results + '\n')
+    #     # print('转换完成:', f.name)
     CVnum = SBnum = TLnum = SLnum = QEnum = AMnum = GPnum = 0
     # CVindex = SBindex = TLindex = SLindex = QEindex = AMindex = GPindex = 0
     SB_list = itertools.product(SB[0], SB[1], SB[2])

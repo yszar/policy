@@ -385,6 +385,7 @@ def run():
     # 去重后的code列表
     codes = set([code[:6] for code in pdfs if code[-3:] == 'pdf'])
     res = []
+    print('Start analysis')
     for pdfname in pdfs:
         if pdfname[-3:] == 'pdf':
             res.append(parse(pdfname))
@@ -422,7 +423,7 @@ def run():
             ["code", "date", "CV", "SB", 'TL', 'SL', 'QE', 'AM', 'GP'])
         writer.writerows(res_good)
     print('Write completion')
-    
+
 
 def runall():
     delpdf()

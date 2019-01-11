@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 CODE = ['000009', '000008', '000007']
 XLSX = 'stcokcode_test.xlsx'
 SAVE_PATH = "pdfs"

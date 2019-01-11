@@ -77,7 +77,7 @@ ITEM_PIPELINES = {
 }
 
 FILES_STORE = 'pdfs'
-LOG_LEVEL = 'WARNING'
+# LOG_LEVEL = 'WARNING'
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://doc.scrapy.org/en/latest/topics/autothrottle.html
 AUTOTHROTTLE_ENABLED = False

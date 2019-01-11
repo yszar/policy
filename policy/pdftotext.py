@@ -170,7 +170,8 @@ def parse(filename):
         #         '', path, path), shell=True)
         # try:
         if not doc.is_extractable:
-            raise PDFTextExtractionNotAllowed
+            pass
+        # raise PDFTextExtractionNotAllowed
         # except:
         #     print(fp.name + 'Do not provide txt conversion',
         #           'change to Tencent ocr identification')
@@ -396,7 +397,7 @@ def run():
     print('Start analysis')
     for pdfname in pdfs:
         if pdfname[-3:] == 'pdf':
-            res.append(parse('000727_2004-04-16.pdf'))
+            res.append(parse(pdfname))
         else:
             continue
     # 降序

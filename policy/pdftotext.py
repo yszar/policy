@@ -57,6 +57,7 @@ def imgtotxt(imglist):
 
 
 def convert_pdf_to_jpg(filename):
+    path = os.path.join('pdfs', filename)
     import shutil
     try:
         shutil.rmtree(os.path.join(os.getcwd(), 'policy', 'image'))
@@ -69,7 +70,7 @@ def convert_pdf_to_jpg(filename):
     title = title.split('/')[-1]
 
     # resolution為解析度，background為背景顏色
-    with Image(filename=filename, resolution=150,
+    with Image(filename=path, resolution=150,
                background=Color('White')) as img:
 
         # 頁數
@@ -395,7 +396,7 @@ def run():
     print('Start analysis')
     for pdfname in pdfs:
         if pdfname[-3:] == 'pdf':
-            res.append(parse(pdfname))
+            res.append(parse('000727_2004-04-16.pdf'))
         else:
             continue
     # 降序

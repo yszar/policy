@@ -7,9 +7,9 @@ from ..param import *
 import xlrd
 
 
-from scrapy.xlib.pydispatch import dispatcher
-from scrapy import signals
-import policy.pdftotext
+# from scrapy.xlib.pydispatch import dispatcher
+# from scrapy import signals
+# import policy.pdftotext
 
 
 class CninfoSpider(scrapy.Spider):
@@ -27,11 +27,11 @@ class CninfoSpider(scrapy.Spider):
     #                                  'nothing&sortType=desc'
     # ]
 
-    @classmethod
-    def from_crawler(cls, crawler, *args, **kwargs):
-        spider = super(CninfoSpider, cls).from_crawler(crawler, *args, **kwargs)
-        crawler.signals.connect(policy.pdftotext.runall, signals.engine_stopped)
-        return spider
+    # @classmethod
+    # def from_crawler(cls, crawler, *args, **kwargs):
+    #     spider = super(CninfoSpider, cls).from_crawler(crawler, *args, **kwargs)
+    #     crawler.signals.connect(policy.pdftotext.runall, signals.engine_stopped)
+    #     return spider
 
     def start_requests(self):
         getfile = xlrd.open_workbook(XLSX)

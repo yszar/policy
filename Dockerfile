@@ -13,4 +13,4 @@ RUN apt-get update && apt-get -y install gcc ghostscript imagemagick \
     #-i https://mirrors.ali    yun.com/pypi/simple/ \
     && rm -rf ~/.cache/pip
  #ENTRYPOINT /usr/bin/run.sh
-CMD ["python", "policy/pdftotext.py"]
+#CMD ["python", "policy/pdftotext.py"]

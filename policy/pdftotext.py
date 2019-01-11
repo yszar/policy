@@ -389,7 +389,7 @@ def run():
     # import random  # test
     # pdf文件名
     pdfs = os.listdir('pdfs')
-    # pdfs = pdfs[:10]
+    pdfs = pdfs[:10]
     # pdfs = random.sample(pdfs, 20)
     # 去重后的code列表
     codes = set([code[:6] for code in pdfs if code[-3:] == 'pdf'])
@@ -417,7 +417,8 @@ def run():
                         code_good[n + d + 1][1] = str(
                             int(code_good[n + d + 1][1][:4]) + 1)
                         tuple(code_good[n + d + 1])
-        res_good.append(code_good[0])
+        for r in code_good:
+            res_good.append(r)
     print('All pdf analysis is complete!')
 
     # try:

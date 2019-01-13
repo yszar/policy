@@ -241,9 +241,9 @@ def parse(filename):
 
     CVnum = SBnum = TLnum = SLnum = QEnum = AMnum = GPnum = 0
     # CVindex = SBindex = TLindex = SLindex = QEindex = AMindex = GPindex = 0
-    SB_list = list(itertools.product(SB[0], SB[1], SB[2]))
-    TL_list = list(itertools.product(TL[0], TL[1], TL[2], TL[3]))
-    SL_list = list(itertools.product(SL[0], SL[1], SL[2], SL[3]))
+    SB_list = list(itertools.product(SB[0], SB[1], SB[2], SB[3]))
+    TL_list = list(itertools.product(TL[0], TL[1], TL[2], TL[3], TL[4]))
+    SL_list = list(itertools.product(SL[0], SL[1], SL[2], SL[3], SL[4]))
     AM_list = list(itertools.product(AM[0], AM[1], AM[2], AM[3]))
     GP_list = list(itertools.product(GP[0], GP[1]))
 
@@ -255,19 +255,25 @@ def parse(filename):
             CVnum = 1
             # CVindex = terms_list.index(term)
         for sbw in SB_list:
-            if sbw[0] in term and sbw[1] in term and sbw[2] in term:
+            if sbw[0] in term and sbw[1] in term and sbw[2] in term and sbw[
+                3] in term and SB[-1][0] not in term and SB[-1][1] not in term and \
+                    SB[-1][
+                        2] not in term and SB[-1][3] not in term:
                 SBnum = 1
                 break
                 # SBindex = terms_list.index(term)
         for tlw in TL_list:
             if tlw[0] in term and tlw[1] in term and tlw[2] in term and tlw[
-                3] in term:
+                3] in term and tlw[4] in term and (
+                    TL[-1][0] not in term and TL[-1][1] not in term and TL[-1][
+                2] not in term):
                 TLnum = 1
                 break
                 # TLindex = terms_list.index(term)
         for slw in SL_list:
             if slw[0] in term and slw[1] in term and slw[
-                2] in term and slw[3] in term:
+                2] in term and slw[3] in term and slw[4] in term and SL[-1][
+                0] not in term:
                 SLnum = 1
                 break
                 # SLindex = terms_list.index(term)
@@ -281,8 +287,7 @@ def parse(filename):
                 break
                 # AMindex = terms_list.index(term)
         for gpw in GP_list:
-            if gpw[0] in term and gpw[1] in term and GP[-1][
-                0] not in term and GP[-1][1] not in term:
+            if gpw[0] in term and gpw[1] in term and GP[-1][0] not in term:
                 GPnum = 1
                 break
                 # GPindex = terms_list.index(term)
@@ -391,7 +396,7 @@ def run():
     # 去重后的code列表
     codes = set([code[:6] for code in pdfs if code[-3:] == 'pdf'])
     res = []
-    # pdfs = ['000001_2011-01-01.pdf']
+    pdfs = ['000016_2018-12-04.pdf']
     print('Start analysis')
     for pdfname in pdfs:
         if pdfname[-3:] == 'pdf':

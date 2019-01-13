@@ -233,7 +233,7 @@ def parse(filename):
                 #             # print(results)
                 #             f.write(results + '\n')
             # print('转换完成:', f.name)
-        except:
+        except Warning:
             print(filename + 'Do not provide txt conversion',
                   'change to Tencent ocr identification')
             print('Start converting', filename, 'to image')
@@ -241,51 +241,48 @@ def parse(filename):
 
     CVnum = SBnum = TLnum = SLnum = QEnum = AMnum = GPnum = 0
     # CVindex = SBindex = TLindex = SLindex = QEindex = AMindex = GPindex = 0
-    SB_list = itertools.product(SB[0], SB[1], SB[2])
-    TL_list = itertools.product(TL[0], TL[1], TL[2], TL[3], TL[4])
-    SL_list = itertools.product(SL[0], SL[1], SL[2], SL[3], SL[4])
-    AM_list = itertools.product(AM[0], AM[1], AM[2], AM[3])
-    GP_list = itertools.product(GP[0], GP[1])
+    SB_list = list(itertools.product(SB[0], SB[1], SB[2]))
+    TL_list = list(itertools.product(TL[0], TL[1], TL[2], TL[3]))
+    SL_list = list(itertools.product(SL[0], SL[1], SL[2], SL[3]))
+    AM_list = list(itertools.product(AM[0], AM[1], AM[2], AM[3]))
+    GP_list = list(itertools.product(GP[0], GP[1]))
 
     # file_str = open(f.name).read()
     term_non = txt.replace('\n', '')
     terms_list = re.split(u'第\w+条', term_non)
-    for term in terms_list[1:]:
+    for term in terms_list:
         if CV[0] in term or CV[1] in term:
             CVnum = 1
             # CVindex = terms_list.index(term)
-        for words in SB_list:
-            if (words[0] in term and words[1] in term and words[
-                2] in term and SB[-1][0] not in term):
+        for sbw in SB_list:
+            if sbw[0] in term and sbw[1] in term and sbw[2] in term:
                 SBnum = 1
                 break
                 # SBindex = terms_list.index(term)
-        for words in TL_list:
-            if (words[0] in term and words[1] in term and words[
-                2] in term and words[3] in term and words[
-                4] in term):
+        for tlw in TL_list:
+            if tlw[0] in term and tlw[1] in term and tlw[2] in term and tlw[
+                3] in term:
                 TLnum = 1
                 break
                 # TLindex = terms_list.index(term)
-        for words in SL_list:
-            if (words[0] in term and words[1] in term and words[
-                2] in term and words[3] in term and words[
-                4] in term):
+        for slw in SL_list:
+            if slw[0] in term and slw[1] in term and slw[
+                2] in term and slw[3] in term:
                 SLnum = 1
                 break
                 # SLindex = terms_list.index(term)
         if QE in term:
             QEnum = 1
             # QEindex = terms_list.index(term)
-        for words in AM_list:
-            if (words[0] in term and words[1] in term and words[
-                2] in term and words[3] in term):
+        for amw in AM_list:
+            if amw[0] in term and amw[1] in term and amw[
+                2] in term and amw[3] in term:
                 AMnum = 1
                 break
                 # AMindex = terms_list.index(term)
-        for words in GP_list:
-            if (words[0] in term and words[1] in term and GP[-1][
-                0] not in term and GP[-1][1] not in term):
+        for gpw in GP_list:
+            if gpw[0] in term and gpw[1] in term and GP[-1][
+                0] not in term and GP[-1][1] not in term:
                 GPnum = 1
                 break
                 # GPindex = terms_list.index(term)
@@ -384,7 +381,7 @@ def delpdf():
 #                 writer.writerow(csv_ros)
 #             print(codename + ' 文件夹pdf转换txt结束')
 #     print('All pdf analysis is complete!')
-
+# 18164
 def run():
     # import random  # test
     # pdf文件名
@@ -394,6 +391,7 @@ def run():
     # 去重后的code列表
     codes = set([code[:6] for code in pdfs if code[-3:] == 'pdf'])
     res = []
+    # pdfs = ['000001_2011-01-01.pdf']
     print('Start analysis')
     for pdfname in pdfs:
         if pdfname[-3:] == 'pdf':

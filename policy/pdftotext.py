@@ -397,7 +397,7 @@ def run():
     # 去重后的code列表
     codes = set([code[:6] for code in pdfs if code[-3:] == 'pdf'])
     res = []
-    # pdfs = ['000001_2011-01-01.pdf']
+    # pdfs = ['000063_2018-08-29.pdf']
     print('Start analysis')
     for pdfname in pdfs:
         if pdfname[-3:] == 'pdf':

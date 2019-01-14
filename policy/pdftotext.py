@@ -259,7 +259,7 @@ def parse(filename):
                 3] in term and SB[-1][0] not in term and SB[-1][
                 1] not in term and \
                     SB[-1][
-                        2] not in term and SB[-1][3] not in term:
+                        2] not in term:
                 SBnum = 1
                 break
                 # SBindex = terms_list.index(term)
@@ -397,7 +397,7 @@ def run():
     # 去重后的code列表
     codes = set([code[:6] for code in pdfs if code[-3:] == 'pdf'])
     res = []
-    # pdfs = ['000016_2018-12-04.pdf']
+    pdfs = ['000001_2011-01-01.pdf']
     print('Start analysis')
     for pdfname in pdfs:
         if pdfname[-3:] == 'pdf':

@@ -256,7 +256,8 @@ def parse(filename):
             # CVindex = terms_list.index(term)
         for sbw in SB_list:
             if sbw[0] in term and sbw[1] in term and sbw[2] in term and sbw[
-                3] in term and SB[-1][0] not in term and SB[-1][1] not in term and \
+                3] in term and SB[-1][0] not in term and SB[-1][
+                1] not in term and \
                     SB[-1][
                         2] not in term and SB[-1][3] not in term:
                 SBnum = 1
@@ -264,7 +265,7 @@ def parse(filename):
                 # SBindex = terms_list.index(term)
         for tlw in TL_list:
             if tlw[0] in term and tlw[1] in term and tlw[2] in term and tlw[
-                3] in term and tlw[4] in term and (
+                3] in term and (
                     TL[-1][0] not in term and TL[-1][1] not in term and TL[-1][
                 2] not in term):
                 TLnum = 1

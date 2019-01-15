@@ -23,7 +23,7 @@ from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
 from pdfminer.converter import PDFPageAggregator
 from pdfminer.layout import LTTextBoxHorizontal, LAParams
 from pdfminer.pdfinterp import PDFTextExtractionNotAllowed
-from pdfminer.pdfparser import PDFSyntaxError
+from pdfminer.pdfparser import PDFSyntaxError, PDFEncryptionError
 from PIL import Image as Image2
 from wand.image import Image
 from wand.color import Color
@@ -168,11 +168,11 @@ def parse(filename):
         #     print(filename)
         # 提供初始化密码
         # 如果没有密码 就创建一个空的字符串
-        # try:
-        doc.initialize()
-        # except:
-        #     call('qpdf --password=%s --decrypt %s %s' % (
-        #         '', path, path), shell=True)
+        try:
+            doc.initialize()
+        except PDFEncryptionError:
+            call('qpdf --password=%s --decrypt %s %s' % (
+                '', path, path), shell=True)
         # try:
         if not doc.is_extractable:
             pass

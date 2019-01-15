@@ -171,8 +171,10 @@ def parse(filename):
         try:
             doc.initialize()
         except PDFEncryptionError:
+            newp = path.split('.')[0] + b'-t' + b'.pdf'
+            os.rename(path, newp)
             call('qpdf --password=%s --decrypt %s %s' % (
-                '', path, path), shell=True)
+                '', newp, path), shell=True)
         # try:
         if not doc.is_extractable:
             pass

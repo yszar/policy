@@ -91,7 +91,7 @@ def convert_pdf_to_jpg(filename):
         image_list.append(path)
     else:
         for i in range(0, length):
-            path = os.path.join(imgpath, '%s-%d.png') % (
+            path = os.path.join(imgpath, '%s-%d.jpg') % (
                 title, i)
             image_list.append(path)
     jpg_list = []

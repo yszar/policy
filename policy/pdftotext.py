@@ -23,6 +23,7 @@ from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
 from pdfminer.converter import PDFPageAggregator
 from pdfminer.layout import LTTextBoxHorizontal, LAParams
 from pdfminer.pdfinterp import PDFTextExtractionNotAllowed
+from pdfminer.pdfparser import PDFSyntaxError
 from PIL import Image as Image2
 from wand.image import Image
 from wand.color import Color
@@ -81,12 +82,12 @@ def convert_pdf_to_jpg(filename):
         length = len(img.sequence)
 
         # 如果頁數超過1頁，生成的文件名會依次加上頁碼數
-        with img.convert('png') as converted:
-            path = os.path.join(imgpath, '%s.png') % title
+        with img.convert('jpg') as converted:
+            path = os.path.join(imgpath, '%s.jpg') % title
             converted.save(filename=path)
     image_list = []
     if length == 1:
-        path = os.path.join(imgpath, '%s.png') % title
+        path = os.path.join(imgpath, '%s.jpg') % title
         image_list.append(path)
     else:
         for i in range(0, length):
@@ -199,7 +200,8 @@ def parse(filename):
         device = PDFPageAggregator(rsrcmgr, laparams=laparams)
         # 创建一个PDF解释器对象
         interpreter = PDFPageInterpreter(rsrcmgr, device)
-
+    except PDFSyntaxError:
+        os.remove(path)
         # try:
         #     os.remove(r'./pdfs/' + codename + '/' + filename.replace(
         #         'pdf', 'txt'))

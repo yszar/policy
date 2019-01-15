@@ -5,8 +5,6 @@ import json
 from ..items import PolicyItem
 from ..param import *
 import xlrd
-
-
 # from scrapy.xlib.pydispatch import dispatcher
 # from scrapy import signals
 # import policy.pdftotext

@@ -47,8 +47,12 @@ def imgtotxt(imglist):
         with open(img, 'rb') as image_file:
             ret = 1
             while ret != 0:
-                result = robot.run(image_file)
-                ret = result['ret']
+                try:
+                    result = robot.run(image_file)
+                except ConnectionError:
+                    ret = 1
+                else:
+                    ret = result['ret']
             for item in result['data']['item_list']:
                 itemstring = item['itemstring']
                 ocrstr.join(itemstring)

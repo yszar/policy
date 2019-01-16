@@ -179,9 +179,9 @@ def parse(filename):
     try:
         if not doc.is_extractable:
             raise PDFTextExtractionNotAllowed
-    except PDFTextExtractionNotAllowed:
+    except (PDFTextExtractionNotAllowed, AttributeError):
         shutil.move(path, os.path.join(os.getcwd(), 'nopdfs', filename))
-        return filename
+        return
     else:
         try:
             rsrcmgr = PDFResourceManager()
@@ -209,7 +209,7 @@ def parse(filename):
         # 创建PDf 资源管理器 来管理共享资源
         except PDFSyntaxError:
             shutil.move(path, os.path.join(os.getcwd(), 'nopdfs', filename))
-            return filename
+            return
         # try:
         #     os.remove(r'./pdfs/' + codename + '/' + filename.replace(
         #         'pdf', 'txt'))
@@ -240,7 +240,7 @@ def parse(filename):
                     txt += results
     except Warning:
         shutil.move(path, os.path.join(os.getcwd(), 'nopdfs', filename))
-        return filename
+        return
             # for x in layout:
             #     if isinstance(x, LTTextBoxHorizontal):
             #         with open(r'./pdfs/' + codename + '/' + filename.replace(

@@ -24,7 +24,7 @@ from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
 from pdfminer.converter import PDFPageAggregator
 from pdfminer.layout import LTTextBoxHorizontal, LAParams
 from pdfminer.pdfinterp import PDFTextExtractionNotAllowed
-from pdfminer.pdfparser import PDFSyntaxError, PDFEncryptionError
+from pdfminer.pdfparser import PDFSyntaxError, PDFEncryptionError, PSEOF
 from PIL import Image as Image2
 from wand.image import Image
 from wand.color import Color
@@ -242,7 +242,7 @@ def parse(filename):
                     #     # print(results)
                     #     f.write(results + '\n')
                     txt += results
-    except Warning:
+    except (Warning, PSEOF):
         shutil.move(path, os.path.join(os.getcwd(), 'nopdfs', filename))
         return
             # for x in layout:

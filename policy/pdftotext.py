@@ -176,6 +176,7 @@ def parse(filename):
         os.rename(path, newp)
         call('qpdf --password=%s --decrypt %s %s' % (
             '', newp, path), shell=True)
+        os.remove(newp)
     try:
         if not doc.is_extractable:
             raise PDFTextExtractionNotAllowed
@@ -408,11 +409,11 @@ def delpdf():
 def run():
     # import random  # test
     # pdf文件名
-    with open("res.csv", "w") as csvfile:
-        writer = csv.writer(csvfile)
-        # 先写入columns_name
-        writer.writerow(
-            ["code", "date", "CV", "SB", 'TL', 'SL', 'QE', 'AM', 'GP'])
+    # with open("res.csv", "w") as csvfile:
+    #     writer = csv.writer(csvfile)
+    #     # 先写入columns_name
+    #     writer.writerow(
+    #         ["code", "date", "CV", "SB", 'TL', 'SL', 'QE', 'AM', 'GP'])
 
     pdfs = os.listdir('pdfs')
     # pdfs = pdfs[:10]

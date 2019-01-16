@@ -115,7 +115,7 @@ def convert_pdf_to_jpg(filename):
             os.remove(img)
             # name = "%s/%s" % ('static/local_images', name)
             jpg_list.append(name)
-    
+
         return jpg_list
 
 
@@ -248,63 +248,63 @@ def parse(filename):
             print('Start converting', filename, 'to image')
             txt = imgtotxt(convert_pdf_to_jpg(filename))
 
-    CVnum = SBnum = TLnum = SLnum = QEnum = AMnum = GPnum = 0
-    # CVindex = SBindex = TLindex = SLindex = QEindex = AMindex = GPindex = 0
-    SB_list = list(itertools.product(SB[0], SB[1], SB[2], SB[3]))
-    TL_list = list(itertools.product(TL[0], TL[1], TL[2], TL[3], TL[4]))
-    SL_list = list(itertools.product(SL[0], SL[1], SL[2], SL[3], SL[4]))
-    AM_list = list(itertools.product(AM[0], AM[1], AM[2], AM[3]))
-    GP_list = list(itertools.product(GP[0], GP[1]))
+        CVnum = SBnum = TLnum = SLnum = QEnum = AMnum = GPnum = 0
+        # CVindex = SBindex = TLindex = SLindex = QEindex = AMindex = GPindex = 0
+        SB_list = list(itertools.product(SB[0], SB[1], SB[2], SB[3]))
+        TL_list = list(itertools.product(TL[0], TL[1], TL[2], TL[3], TL[4]))
+        SL_list = list(itertools.product(SL[0], SL[1], SL[2], SL[3], SL[4]))
+        AM_list = list(itertools.product(AM[0], AM[1], AM[2], AM[3]))
+        GP_list = list(itertools.product(GP[0], GP[1]))
 
-    # file_str = open(f.name).read()
-    term_non = txt.replace('\n', '')
-    terms_list = re.split(u'第\w+条', term_non)
-    for term in terms_list:
-        if CV[0] in term or CV[1] in term:
-            CVnum = 1
-            # CVindex = terms_list.index(term)
-        for sbw in SB_list:
-            if sbw[0] in term and sbw[1] in term and sbw[2] in term and sbw[
-                3] in term and SB[-1][0] not in term and SB[-1][
-                1] not in term and \
-                    SB[-1][
-                        2] not in term:
-                SBnum = 1
-                break
-                # SBindex = terms_list.index(term)
-        for tlw in TL_list:
-            if tlw[0] in term and tlw[1] in term and tlw[2] in term and tlw[
-                3] in term and (
-                    TL[-1][0] not in term and TL[-1][1] not in term and TL[-1][
-                2] not in term):
-                TLnum = 1
-                break
-                # TLindex = terms_list.index(term)
-        for slw in SL_list:
-            if slw[0] in term and slw[1] in term and slw[
-                2] in term and slw[3] in term and slw[4] in term and SL[-1][
-                0] not in term:
-                SLnum = 1
-                break
-                # SLindex = terms_list.index(term)
-        if QE in term:
-            QEnum = 1
-            # QEindex = terms_list.index(term)
-        for amw in AM_list:
-            if amw[0] in term and amw[1] in term and amw[
-                2] in term and amw[3] in term:
-                AMnum = 1
-                break
-                # AMindex = terms_list.index(term)
-        for gpw in GP_list:
-            if gpw[0] in term and gpw[1] in term and GP[-1][0] not in term:
-                GPnum = 1
-                break
-                # GPindex = terms_list.index(term)
-    print(filename, 'analysis completed')
-    return filename.split('.')[0].split('_')[0], \
-           filename.split('.')[0].split('_')[
-               1], CVnum, SBnum, TLnum, SLnum, QEnum, AMnum, GPnum
+        # file_str = open(f.name).read()
+        term_non = txt.replace('\n', '')
+        terms_list = re.split(u'第\w+条', term_non)
+        for term in terms_list:
+            if CV[0] in term or CV[1] in term:
+                CVnum = 1
+                # CVindex = terms_list.index(term)
+            for sbw in SB_list:
+                if sbw[0] in term and sbw[1] in term and sbw[2] in term and sbw[
+                    3] in term and SB[-1][0] not in term and SB[-1][
+                    1] not in term and \
+                        SB[-1][
+                            2] not in term:
+                    SBnum = 1
+                    break
+                    # SBindex = terms_list.index(term)
+            for tlw in TL_list:
+                if tlw[0] in term and tlw[1] in term and tlw[2] in term and tlw[
+                    3] in term and (
+                        TL[-1][0] not in term and TL[-1][1] not in term and TL[-1][
+                    2] not in term):
+                    TLnum = 1
+                    break
+                    # TLindex = terms_list.index(term)
+            for slw in SL_list:
+                if slw[0] in term and slw[1] in term and slw[
+                    2] in term and slw[3] in term and slw[4] in term and SL[-1][
+                    0] not in term:
+                    SLnum = 1
+                    break
+                    # SLindex = terms_list.index(term)
+            if QE in term:
+                QEnum = 1
+                # QEindex = terms_list.index(term)
+            for amw in AM_list:
+                if amw[0] in term and amw[1] in term and amw[
+                    2] in term and amw[3] in term:
+                    AMnum = 1
+                    break
+                    # AMindex = terms_list.index(term)
+            for gpw in GP_list:
+                if gpw[0] in term and gpw[1] in term and GP[-1][0] not in term:
+                    GPnum = 1
+                    break
+                    # GPindex = terms_list.index(term)
+        print(filename, 'analysis completed')
+        return filename.split('.')[0].split('_')[0], \
+               filename.split('.')[0].split('_')[
+                   1], CVnum, SBnum, TLnum, SLnum, QEnum, AMnum, GPnum
 
 
 def delpdf():

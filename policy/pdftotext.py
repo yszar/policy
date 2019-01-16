@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import shutil
 import os
 import re
 # import pandas as pd
@@ -63,7 +64,6 @@ def imgtotxt(imglist):
 
 def convert_pdf_to_jpg(filename):
     path = os.path.join('pdfs', filename)
-    import shutil
     try:
         shutil.rmtree(os.path.join(os.getcwd(), 'policy', 'image'))
         os.mkdir(os.path.join(os.getcwd(), 'policy', 'image'))
@@ -155,31 +155,41 @@ def convert_pdf_to_jpg(filename):
 
 def parse(filename):
     path = os.path.join('pdfs', filename)
+    # try:
+    fp = open(path, 'rb')  # 以二进制读模式打开
+    # 用文件对象来创建一个pdf文档分析器
+    praser = PDFParser(fp)
+    # 创建一个PDF文档
+    doc = PDFDocument()
+    # 连接分析器 与文档对象
+    praser.set_document(doc)
+    # try:
+    doc.set_parser(praser)
+    # except:
+    #     print(filename)
+    # 提供初始化密码
+    # 如果没有密码 就创建一个空的字符串
     try:
-        fp = open(path, 'rb')  # 以二进制读模式打开
-        # 用文件对象来创建一个pdf文档分析器
-        praser = PDFParser(fp)
-        # 创建一个PDF文档
-        doc = PDFDocument()
-        # 连接分析器 与文档对象
-        praser.set_document(doc)
-        # try:
-        doc.set_parser(praser)
-        # except:
-        #     print(filename)
-        # 提供初始化密码
-        # 如果没有密码 就创建一个空的字符串
-        try:
-            doc.initialize()
-        except PDFEncryptionError:
-            newp = path.split('.')[0] + '-t' + '.pdf'
-            os.rename(path, newp)
-            call('qpdf --password=%s --decrypt %s %s' % (
-                '', newp, path), shell=True)
-        # try:
+        doc.initialize()
+    except PDFEncryptionError:
+        newp = path.split('.')[0] + '-t' + '.pdf'
+        os.rename(path, newp)
+        call('qpdf --password=%s --decrypt %s %s' % (
+            '', newp, path), shell=True)
+    try:
         if not doc.is_extractable:
-            pass
-        # raise PDFTextExtractionNotAllowed
+            raise PDFTextExtractionNotAllowed
+    except PDFTextExtractionNotAllowed:
+        shutil.move(path, os.path.join(os.getcwd(), 'nopdfs', filename))
+        return filename
+    else:
+        try:
+            rsrcmgr = PDFResourceManager()
+            # 创建一个PDF设备对象
+            laparams = LAParams()
+            device = PDFPageAggregator(rsrcmgr, laparams=laparams)
+            # 创建一个PDF解释器对象
+            interpreter = PDFPageInterpreter(rsrcmgr, device)
         # except:
         #     print(fp.name + 'Do not provide txt conversion',
         #           'change to Tencent ocr identification')
@@ -197,114 +207,112 @@ def parse(filename):
         # # else:
         # try:
         # 创建PDf 资源管理器 来管理共享资源
-        rsrcmgr = PDFResourceManager()
-        # 创建一个PDF设备对象
-        laparams = LAParams()
-        device = PDFPageAggregator(rsrcmgr, laparams=laparams)
-        # 创建一个PDF解释器对象
-        interpreter = PDFPageInterpreter(rsrcmgr, device)
-    except PDFSyntaxError:
-        os.remove(path)
+        except PDFSyntaxError:
+            shutil.move(path, os.path.join(os.getcwd(), 'nopdfs', filename))
+            return filename
         # try:
         #     os.remove(r'./pdfs/' + codename + '/' + filename.replace(
         #         'pdf', 'txt'))
         # except FileNotFoundError:
         #     pass
         # 循环遍历列表，每次处理一个page的内容
-    except AttributeError:
-        print(filename + 'Do not provide txt conversion',
-              'change to Tencent ocr identification')
-        print('Start converting', filename, 'to image')
-        txt = imgtotxt(convert_pdf_to_jpg(filename))
-    else:
-        txt = ""
-        try:
-            for page in doc.get_pages():  # doc.get_pages() 获取page列表
-                interpreter.process_page(page)
-                # 接受该页面的LTPage对象
-                layout = device.get_result()
-                """ 
-                这里layout是一个LTPage对象 里面存放着 这个page解析出的各种对象 一般包括LTTextBox, LTFigure, 
-                LTImage, LTTextBoxHorizontal 等等 想要获取文本就获得对象的text属性
-                """
-                for x in layout:
-                    if isinstance(x, LTTextBoxHorizontal):
-                        # with open(r'./pdfs/test.txt', 'a') as f:
-                        results = x.get_text()
-                        #     # print(results)
-                        #     f.write(results + '\n')
-                        txt += results
-                # for x in layout:
-                #     if isinstance(x, LTTextBoxHorizontal):
-                #         with open(r'./pdfs/' + codename + '/' + filename.replace(
-                #                 'pdf', 'txt'), 'a') as f:
-                #             results = x.get_text()
-                #             # print(results)
-                #             f.write(results + '\n')
-            # print('转换完成:', f.name)
-        except Warning:
-            print(filename + 'Do not provide txt conversion',
-                  'change to Tencent ocr identification')
-            print('Start converting', filename, 'to image')
-            txt = imgtotxt(convert_pdf_to_jpg(filename))
+    # except AttributeError:
+    #     print(filename + 'Do not provide txt conversion',
+    #           'change to Tencent ocr identification')
+    #     print('Start converting', filename, 'to image')
+    #     txt = imgtotxt(convert_pdf_to_jpg(filename))
+    txt = ""
+    try:
+        for page in doc.get_pages():  # doc.get_pages() 获取page列表
+            interpreter.process_page(page)
+            # 接受该页面的LTPage对象
+            layout = device.get_result()
+            """ 
+            这里layout是一个LTPage对象 里面存放着 这个page解析出的各种对象 一般包括LTTextBox, LTFigure, 
+            LTImage, LTTextBoxHorizontal 等等 想要获取文本就获得对象的text属性
+            """
+            for x in layout:
+                if isinstance(x, LTTextBoxHorizontal):
+                    # with open(r'./pdfs/test.txt', 'a') as f:
+                    results = x.get_text()
+                    #     # print(results)
+                    #     f.write(results + '\n')
+                    txt += results
+    except Warning:
+        shutil.move(path, os.path.join(os.getcwd(), 'nopdfs', filename))
+        return filename
+            # for x in layout:
+            #     if isinstance(x, LTTextBoxHorizontal):
+            #         with open(r'./pdfs/' + codename + '/' + filename.replace(
+            #                 'pdf', 'txt'), 'a') as f:
+            #             results = x.get_text()
+            #             # print(results)
+            #             f.write(results + '\n')
+        # print('转换完成:', f.name)
+    # except Warning:
+    #     print(filename + 'Do not provide txt conversion',
+    #           'change to Tencent ocr identification')
+    #     print('Start converting', filename, 'to image')
+    #     txt = imgtotxt(convert_pdf_to_jpg(filename))
 
-        CVnum = SBnum = TLnum = SLnum = QEnum = AMnum = GPnum = 0
-        # CVindex = SBindex = TLindex = SLindex = QEindex = AMindex = GPindex = 0
-        SB_list = list(itertools.product(SB[0], SB[1], SB[2], SB[3]))
-        TL_list = list(itertools.product(TL[0], TL[1], TL[2], TL[3], TL[4]))
-        SL_list = list(itertools.product(SL[0], SL[1], SL[2], SL[3], SL[4]))
-        AM_list = list(itertools.product(AM[0], AM[1], AM[2], AM[3]))
-        GP_list = list(itertools.product(GP[0], GP[1]))
+    CVnum = SBnum = TLnum = SLnum = QEnum = AMnum = GPnum = 0
+    # CVindex = SBindex = TLindex = SLindex = QEindex = AMindex = GPindex = 0
+    SB_list = list(itertools.product(SB[0], SB[1], SB[2], SB[3]))
+    TL_list = list(itertools.product(TL[0], TL[1], TL[2], TL[3], TL[4]))
+    SL_list = list(itertools.product(SL[0], SL[1], SL[2], SL[3], SL[4]))
+    AM_list = list(itertools.product(AM[0], AM[1], AM[2], AM[3]))
+    GP_list = list(itertools.product(GP[0], GP[1]))
 
-        # file_str = open(f.name).read()
-        term_non = txt.replace('\n', '')
-        terms_list = re.split(u'第\w+条', term_non)
-        for term in terms_list:
-            if CV[0] in term or CV[1] in term:
-                CVnum = 1
-                # CVindex = terms_list.index(term)
-            for sbw in SB_list:
-                if sbw[0] in term and sbw[1] in term and sbw[2] in term and sbw[
-                    3] in term and SB[-1][0] not in term and SB[-1][
-                    1] not in term and \
-                        SB[-1][
-                            2] not in term:
-                    SBnum = 1
-                    break
-                    # SBindex = terms_list.index(term)
-            for tlw in TL_list:
-                if tlw[0] in term and tlw[1] in term and tlw[2] in term and tlw[
-                    3] in term and (
-                        TL[-1][0] not in term and TL[-1][1] not in term and TL[-1][
-                    2] not in term):
-                    TLnum = 1
-                    break
-                    # TLindex = terms_list.index(term)
-            for slw in SL_list:
-                if slw[0] in term and slw[1] in term and slw[
-                    2] in term and slw[3] in term and slw[4] in term and SL[-1][
-                    0] not in term:
-                    SLnum = 1
-                    break
-                    # SLindex = terms_list.index(term)
-            if QE in term:
-                QEnum = 1
-                # QEindex = terms_list.index(term)
-            for amw in AM_list:
-                if amw[0] in term and amw[1] in term and amw[
-                    2] in term and amw[3] in term:
-                    AMnum = 1
-                    break
-                    # AMindex = terms_list.index(term)
-            for gpw in GP_list:
-                if gpw[0] in term and gpw[1] in term and GP[-1][0] not in term:
-                    GPnum = 1
-                    break
-                    # GPindex = terms_list.index(term)
-        print(filename, 'analysis completed')
-        return filename.split('.')[0].split('_')[0], \
-               filename.split('.')[0].split('_')[
-                   1], CVnum, SBnum, TLnum, SLnum, QEnum, AMnum, GPnum
+    # file_str = open(f.name).read()
+    term_non = txt.replace('\n', '')
+    terms_list = re.split(u'第\w+条', term_non)
+    for term in terms_list:
+        if CV[0] in term or CV[1] in term:
+            CVnum = 1
+            # CVindex = terms_list.index(term)
+        for sbw in SB_list:
+            if sbw[0] in term and sbw[1] in term and sbw[2] in term and sbw[
+                3] in term and SB[-1][0] not in term and SB[-1][
+                1] not in term and \
+                    SB[-1][
+                        2] not in term:
+                SBnum = 1
+                break
+                # SBindex = terms_list.index(term)
+        for tlw in TL_list:
+            if tlw[0] in term and tlw[1] in term and tlw[2] in term and tlw[
+                3] in term and (
+                    TL[-1][0] not in term and TL[-1][1] not in term and TL[-1][
+                2] not in term):
+                TLnum = 1
+                break
+                # TLindex = terms_list.index(term)
+        for slw in SL_list:
+            if slw[0] in term and slw[1] in term and slw[
+                2] in term and slw[3] in term and slw[4] in term and SL[-1][
+                0] not in term:
+                SLnum = 1
+                break
+                # SLindex = terms_list.index(term)
+        if QE in term:
+            QEnum = 1
+            # QEindex = terms_list.index(term)
+        for amw in AM_list:
+            if amw[0] in term and amw[1] in term and amw[
+                2] in term and amw[3] in term:
+                AMnum = 1
+                break
+                # AMindex = terms_list.index(term)
+        for gpw in GP_list:
+            if gpw[0] in term and gpw[1] in term and GP[-1][0] not in term:
+                GPnum = 1
+                break
+                # GPindex = terms_list.index(term)
+    print(filename, 'analysis completed')
+    shutil.move(path, os.path.join(os.getcwd(), 'goodpdfs', filename))
+    return filename.split('.')[0].split('_')[0], \
+           filename.split('.')[0].split('_')[
+               1], CVnum, SBnum, TLnum, SLnum, QEnum, AMnum, GPnum
 
 
 def delpdf():
@@ -400,52 +408,65 @@ def delpdf():
 def run():
     # import random  # test
     # pdf文件名
+    with open("res.csv", "w") as csvfile:
+        writer = csv.writer(csvfile)
+        # 先写入columns_name
+        writer.writerow(
+            ["code", "date", "CV", "SB", 'TL', 'SL', 'QE', 'AM', 'GP'])
+
     pdfs = os.listdir('pdfs')
     # pdfs = pdfs[:10]
     # pdfs = random.sample(pdfs, 20)
     # 去重后的code列表
     codes = set([code[:6] for code in pdfs if code[-3:] == 'pdf'])
     res = []
-    # pdfs = ['000063_2018-08-29.pdf']
+    # pdfs = ['000001_2011-01-01.pdf']
     print('Start analysis')
     for pdfname in pdfs:
         if pdfname[-3:] == 'pdf':
-            res.append(parse(pdfname))
+            # res.append(parse(pdfname))
+            row = parse(pdfname)
+            with open("res.csv", "a") as csvfile:
+                writer = csv.writer(csvfile)
+                # 先写入columns_name
+                writer.writerow(row)
+                # writer.writerow(
+                #     ["code", "date", "CV", "SB", 'TL', 'SL', 'QE', 'AM', 'GP'])
         else:
             continue
-    # 降序
-    # res_sort = sorted(res, key=lambda x: x[1])
-    res_good = []
-    for cn in codes:
-        code_good = code_list = sorted(
-            [x for c, x in enumerate(res) if x[0].find(cn) != -1])
-        if len(code_list) >= 2:
-            for n in range(len(code_list) - 1):
-                diff = int(code_list[n + 1][1][:4]) - int(
-                    code_list[n][1][:4])
-                if diff > 1:
-                    for d in range(diff - 1):
-                        code_good.insert(n + d + 1, code_good[n + d])
-                        code_good[n + d + 1] = list(code_good[n + d + 1])
-                        code_good[n + d + 1][1] = str(
-                            int(code_good[n + d + 1][1][:4]) + 1)
-                        tuple(code_good[n + d + 1])
-        for r in code_good:
-            res_good.append(r)
-    print('All pdf analysis is complete!')
-
-    # try:
-    #     os.remove(r'res.csv')
-    # except:
-    #     pass
-    print('Start writing to res.csv')
-    with open("res.csv", "w") as csvfile:
-        writer = csv.writer(csvfile)
-        # 先写入columns_name
-        writer.writerow(
-            ["code", "date", "CV", "SB", 'TL', 'SL', 'QE', 'AM', 'GP'])
-        writer.writerows(res_good)
-    print('Write completion')
+    # # 降序
+    # # res_sort = sorted(res, key=lambda x: x[1])
+    # res_good = []
+    # for cn in codes:
+    #     code_good = code_list = sorted(
+    #         [x for c, x in enumerate(res) if x[0].find(cn) != -1])
+    #     if len(code_list) >= 2:
+    #         for n in range(len(code_list) - 1):
+    #             diff = int(code_list[n + 1][1][:4]) - int(
+    #                 code_list[n][1][:4])
+    #             if diff > 1:
+    #                 for d in range(diff - 1):
+    #                     code_good.insert(n + d + 1, code_good[n + d])
+    #                     code_good[n + d + 1] = list(code_good[n + d + 1])
+    #                     code_good[n + d + 1][1] = str(
+    #                         int(code_good[n + d + 1][1][:4]) + 1)
+    #                     tuple(code_good[n + d + 1])
+    #     for r in code_good:
+    #         res_good.append(r)
+    # print('All pdf analysis is complete!')
+    #
+    # # try:
+    # #     os.remove(r'res.csv')
+    # # except:
+    # #     pass
+    # print('Start writing to res.csv')
+    # with open("res.csv", "w") as csvfile:
+    #     writer = csv.writer(csvfile)
+    #     # 先写入columns_name
+    #     writer.writerow(
+    #         ["code", "date", "CV", "SB", 'TL', 'SL', 'QE', 'AM', 'GP'])
+    #     writer.writerows(res_good)
+    # print('Write completion')
 
 
 def runall():

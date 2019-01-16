@@ -426,12 +426,15 @@ def run():
         if pdfname[-3:] == 'pdf':
             # res.append(parse(pdfname))
             row = parse(pdfname)
-            with open("res.csv", "a") as csvfile:
-                writer = csv.writer(csvfile)
-                # 先写入columns_name
-                writer.writerow(row)
-                # writer.writerow(
-                #     ["code", "date", "CV", "SB", 'TL', 'SL', 'QE', 'AM', 'GP'])
+            if row is not None:
+                with open("res.csv", "a") as csvfile:
+                    writer = csv.writer(csvfile)
+                    # 先写入columns_name
+                    writer.writerow(row)
+                    # writer.writerow(
+                    #     ["code", "date", "CV", "SB", 'TL', 'SL', 'QE', 'AM', 'GP'])
+            else:
+                continue
         else:
             continue
     # # 降序

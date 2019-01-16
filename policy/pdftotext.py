@@ -163,8 +163,11 @@ def parse(filename):
     doc = PDFDocument()
     # 连接分析器 与文档对象
     praser.set_document(doc)
-    # try:
-    doc.set_parser(praser)
+    try:
+        doc.set_parser(praser)
+    except PDFSyntaxError:
+        shutil.move(path, os.path.join(os.getcwd(), 'nopdfs', filename))
+        return
     # except:
     #     print(filename)
     # 提供初始化密码
@@ -184,13 +187,13 @@ def parse(filename):
         shutil.move(path, os.path.join(os.getcwd(), 'nopdfs', filename))
         return
     else:
-        try:
-            rsrcmgr = PDFResourceManager()
-            # 创建一个PDF设备对象
-            laparams = LAParams()
-            device = PDFPageAggregator(rsrcmgr, laparams=laparams)
-            # 创建一个PDF解释器对象
-            interpreter = PDFPageInterpreter(rsrcmgr, device)
+        # try:
+        rsrcmgr = PDFResourceManager()
+        # 创建一个PDF设备对象
+        laparams = LAParams()
+        device = PDFPageAggregator(rsrcmgr, laparams=laparams)
+        # 创建一个PDF解释器对象
+        interpreter = PDFPageInterpreter(rsrcmgr, device)
         # except:
         #     print(fp.name + 'Do not provide txt conversion',
         #           'change to Tencent ocr identification')
@@ -208,9 +211,9 @@ def parse(filename):
         # # else:
         # try:
         # 创建PDf 资源管理器 来管理共享资源
-        except PDFSyntaxError:
-            shutil.move(path, os.path.join(os.getcwd(), 'nopdfs', filename))
-            return
+        # except PDFSyntaxError:
+        #     shutil.move(path, os.path.join(os.getcwd(), 'nopdfs', filename))
+        #     return
         # try:
         #     os.remove(r'./pdfs/' + codename + '/' + filename.replace(
         #         'pdf', 'txt'))

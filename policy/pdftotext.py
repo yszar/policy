@@ -69,53 +69,54 @@ def convert_pdf_to_jpg(filename):
         os.mkdir(os.path.join(os.getcwd(), 'policy', 'image'))
     except FileNotFoundError:
         os.mkdir(os.path.join(os.getcwd(), 'policy', 'image'))
-    imgpath = os.path.join(os.getcwd(), 'policy', 'image')
-    end_length = len(filename.split('.')[-1]) + 1
-    title = filename[0:-end_length]
-    title = title.split('/')[-1]
-
-    # resolution為解析度，background為背景顏色
-    with Image(filename=path, resolution=150,
-               background=Color('White')) as img:
-
-        # 頁數
-        length = len(img.sequence)
-
-        # 如果頁數超過1頁，生成的文件名會依次加上頁碼數
-        with img.convert('jpg') as converted:
-            path = os.path.join(imgpath, '%s.jpg') % title
-            converted.save(filename=path)
-    image_list = []
-    if length == 1:
-        path = os.path.join(imgpath, '%s.jpg') % title
-        image_list.append(path)
     else:
-        for i in range(0, length):
-            path = os.path.join(imgpath, '%s-%d.jpg') % (
-                title, i)
+        imgpath = os.path.join(os.getcwd(), 'policy', 'image')
+        end_length = len(filename.split('.')[-1]) + 1
+        title = filename[0:-end_length]
+        title = title.split('/')[-1]
+
+        # resolution為解析度，background為背景顏色
+        with Image(filename=path, resolution=150,
+                   background=Color('White')) as img:
+
+            # 頁數
+            length = len(img.sequence)
+
+            # 如果頁數超過1頁，生成的文件名會依次加上頁碼數
+            with img.convert('jpg') as converted:
+                path = os.path.join(imgpath, '%s.jpg') % title
+                converted.save(filename=path)
+        image_list = []
+        if length == 1:
+            path = os.path.join(imgpath, '%s.jpg') % title
             image_list.append(path)
-    jpg_list = []
-    for img in image_list:
-        image = Image2.open(img)
-        x, y = image.size
-        background = Image2.new('RGBA', image.size, (255, 255, 255))
+        else:
+            for i in range(0, length):
+                path = os.path.join(imgpath, '%s-%d.jpg') % (
+                    title, i)
+                image_list.append(path)
+        jpg_list = []
+        for img in image_list:
+            image = Image2.open(img)
+            x, y = image.size
+            background = Image2.new('RGBA', image.size, (255, 255, 255))
 
-        try:
-            background.paste(image, (0, 0, x, y), image)
-            image = background.convert('RGB')
-        except:
-            image = image.convert('RGBA')
-            background.paste(image, (0, 0, x, y), image)
-            image = background.convert('RGB')
+            try:
+                background.paste(image, (0, 0, x, y), image)
+                image = background.convert('RGB')
+            except:
+                image = image.convert('RGBA')
+                background.paste(image, (0, 0, x, y), image)
+                image = background.convert('RGB')
 
-        title = img.split('.')[0]
-        name = title + '.jpg'
-        image.save(name)
-        os.remove(img)
-        # name = "%s/%s" % ('static/local_images', name)
-        jpg_list.append(name)
-
-    return jpg_list
+            title = img.split('.')[0]
+            name = title + '.jpg'
+            image.save(name)
+            os.remove(img)
+            # name = "%s/%s" % ('static/local_images', name)
+            jpg_list.append(name)
+    
+        return jpg_list
 
 
 # def pdfocr():
@@ -210,7 +211,7 @@ def parse(filename):
         # except FileNotFoundError:
         #     pass
         # 循环遍历列表，每次处理一个page的内容
-    except:
+    except AttributeError:
         print(filename + 'Do not provide txt conversion',
               'change to Tencent ocr identification')
         print('Start converting', filename, 'to image')

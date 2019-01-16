@@ -105,5 +105,7 @@ venv.bak/
 # mypy
 .mypy_cache/
 pdfs/
+nopdfs/
+goodpdfs/
 policy/image/
 .DS_Store

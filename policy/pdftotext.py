@@ -429,6 +429,7 @@ def run():
     for pdfname in pdfs:
         if pdfname[-3:] == 'pdf':
             # res.append(parse(pdfname))
+            print('start', pdfname)
             row = parse(pdfname)
             if row is not None:
                 with open("res.csv", "a") as csvfile:

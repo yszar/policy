@@ -165,7 +165,7 @@ def parse(filename):
     praser.set_document(doc)
     try:
         doc.set_parser(praser)
-    except PDFSyntaxError:
+    except (PDFSyntaxError, PSEOF):
         shutil.move(path, os.path.join(os.getcwd(), 'nopdfs', filename))
         return
     # except:

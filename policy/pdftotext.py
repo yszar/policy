@@ -83,7 +83,10 @@ def pdf_to_jpg(filename):
             try:
                 converted.save(filename=path)
             except Exception:
-                os.remove(path)
+                try:
+                    os.remove(path)
+                except FileNotFoundError:
+                    pass
     image_list = []
     if length == 1:
         path = os.path.join(os.getcwd(), 'policy', 'image', '%s.png') % title

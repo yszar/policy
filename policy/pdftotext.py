@@ -57,9 +57,57 @@ def imgtotxt(imglist):
                     ret = result['ret']
             for item in result['data']['item_list']:
                 itemstring = item['itemstring']
-                ocrstr.join(itemstring)
+                # ocrstr.join(itemstring)
+                ocrstr += itemstring
+        os.remove(img)
     return ocrstr
     # {'ret': 0, 'msg': 'ok', 'data': {'text': '一艘飞船'}}
+
+
+def pdf_to_jpg(filename):
+    end_length = len(filename.split('.')[-1]) + 1
+    title = filename[0:-end_length]
+    title = title.split('/')[-1]
+
+    # resolution為解析度，background為背景顏色
+    with Image(filename=filename, resolution=150,
+               background=Color('White')) as img:
+
+        # 頁數
+        length = len(img.sequence)
+        imgpath = os.path.join(os.getcwd(), 'policy', 'image')
+        # 如果頁數超過1頁，生成的文件名會依次加上頁碼數
+        with img.convert('png') as converted:
+            path = os.path.join(imgpath, '%s.png') % title
+            converted.save(filename=path)
+    image_list = []
+    if length == 1:
+        path = os.path.join(os.getcwd(), 'policy', 'image', '%s.png') % title
+        image_list.append(path)
+    else:
+        for i in range(0, length):
+            path = os.path.join(os.getcwd(), 'policy', 'image', '%s-%d.png') % (
+            title, i)
+            image_list.append(path)
+    jpg_list = []
+    for img in image_list:
+        image = Image2.open(img)
+        x, y = image.size
+        background = Image2.new('RGBA', image.size, (255, 255, 255))
+        try:
+            background.paste(image, (0, 0, x, y), image)
+            image = background.convert('RGB')
+        except:
+            image = image.convert('RGBA')
+            background.paste(image, (0, 0, x, y), image)
+            image = background.convert('RGB')
+        title = img.split('.')[0]
+        name = title + '.jpg'
+        image.save(name)
+        os.remove(img)
+        # name = "%s/%s" % (static_host, name)
+        jpg_list.append(name)
+    return jpg_list
 
 
 def convert_pdf_to_jpg(filename):
@@ -69,54 +117,53 @@ def convert_pdf_to_jpg(filename):
         os.mkdir(os.path.join(os.getcwd(), 'policy', 'image'))
     except FileNotFoundError:
         os.mkdir(os.path.join(os.getcwd(), 'policy', 'image'))
+    # else:
+    imgpath = os.path.join(os.getcwd(), 'policy', 'image')
+    end_length = len(filename.split('.')[-1]) + 1
+    title = filename[0:-end_length]
+    title = title.split('/')[-1]
+
+    # resolution為解析度，background為背景顏色
+    with Image(filename=path, resolution=150,
+               background=Color('White')) as img:
+        # 頁數
+        length = len(img.sequence)
+        # 如果頁數超過1頁，生成的文件名會依次加上頁碼數
+        with img.convert('jpeg') as converted:
+            path = os.path.join(imgpath, '%s.jpeg') % title
+            converted.save(filename=path)
+
+    image_list = []
+    if length == 1:
+        path = os.path.join(imgpath, '%s.jpeg') % title
+        image_list.append(path)
     else:
-        imgpath = os.path.join(os.getcwd(), 'policy', 'image')
-        end_length = len(filename.split('.')[-1]) + 1
-        title = filename[0:-end_length]
-        title = title.split('/')[-1]
-
-        # resolution為解析度，background為背景顏色
-        with Image(filename=path, resolution=150,
-                   background=Color('White')) as img:
-
-            # 頁數
-            length = len(img.sequence)
-
-            # 如果頁數超過1頁，生成的文件名會依次加上頁碼數
-            with img.convert('jpg') as converted:
-                path = os.path.join(imgpath, '%s.jpg') % title
-                converted.save(filename=path)
-        image_list = []
-        if length == 1:
-            path = os.path.join(imgpath, '%s.jpg') % title
+        for i in range(0, length):
+            path = os.path.join(imgpath, '%s-%d.jpeg') % (
+                title, i)
             image_list.append(path)
-        else:
-            for i in range(0, length):
-                path = os.path.join(imgpath, '%s-%d.jpg') % (
-                    title, i)
-                image_list.append(path)
-        jpg_list = []
-        for img in image_list:
-            image = Image2.open(img)
-            x, y = image.size
-            background = Image2.new('RGBA', image.size, (255, 255, 255))
+    jpg_list = []
+    for img in image_list:
+        image = Image2.open(img)
+        x, y = image.size
+        background = Image2.new('RGBA', image.size, (255, 255, 255))
 
-            try:
-                background.paste(image, (0, 0, x, y), image)
-                image = background.convert('RGB')
-            except:
-                image = image.convert('RGBA')
-                background.paste(image, (0, 0, x, y), image)
-                image = background.convert('RGB')
+        try:
+            background.paste(image, (0, 0, x, y), image)
+            image = background.convert('RGB')
+        except:
+            image = image.convert('RGBA')
+            background.paste(image, (0, 0, x, y), image)
+            image = background.convert('RGB')
 
-            title = img.split('.')[0]
-            name = title + '.jpg'
-            image.save(name)
-            os.remove(img)
-            # name = "%s/%s" % ('static/local_images', name)
-            jpg_list.append(name)
+        title = img.split('.')[0]
+        name = title + '.jpeg'
+        image.save(name)
+        os.remove(img)
+        # name = "%s/%s" % ('static/local_images', name)
+        jpg_list.append(name)
 
-        return jpg_list
+    return jpg_list
 
 
 # def pdfocr():
@@ -153,98 +200,99 @@ def convert_pdf_to_jpg(filename):
 '''
 
 
-def parse(filename):
+def parse(filename, type='ptot'):
     path = os.path.join('pdfs', filename)
-    # try:
-    fp = open(path, 'rb')  # 以二进制读模式打开
-    # 用文件对象来创建一个pdf文档分析器
-    praser = PDFParser(fp)
-    # 创建一个PDF文档
-    doc = PDFDocument()
-    # 连接分析器 与文档对象
-    praser.set_document(doc)
-    try:
-        doc.set_parser(praser)
-    except (PDFSyntaxError, PSEOF):
-        shutil.move(path, os.path.join(os.getcwd(), 'nopdfs', filename))
-        return
-    # except:
-    #     print(filename)
-    # 提供初始化密码
-    # 如果没有密码 就创建一个空的字符串
-    try:
-        doc.initialize()
-    except PDFEncryptionError:
-        newp = path.split('.')[0] + '-t' + '.pdf'
-        os.rename(path, newp)
-        call('qpdf --password=%s --decrypt %s %s' % (
-            '', newp, path), shell=True)
-        os.remove(newp)
-    try:
-        if not doc.is_extractable:
-            raise PDFTextExtractionNotAllowed
-    except (PDFTextExtractionNotAllowed, AttributeError):
-        shutil.move(path, os.path.join(os.getcwd(), 'nopdfs', filename))
-        return
-    else:
+    if type == 'ptot':
         # try:
-        rsrcmgr = PDFResourceManager()
-        # 创建一个PDF设备对象
-        laparams = LAParams()
-        device = PDFPageAggregator(rsrcmgr, laparams=laparams)
-        # 创建一个PDF解释器对象
-        interpreter = PDFPageInterpreter(rsrcmgr, device)
+        fp = open(path, 'rb')  # 以二进制读模式打开
+        # 用文件对象来创建一个pdf文档分析器
+        praser = PDFParser(fp)
+        # 创建一个PDF文档
+        doc = PDFDocument()
+        # 连接分析器 与文档对象
+        praser.set_document(doc)
+        try:
+            doc.set_parser(praser)
+        except (PDFSyntaxError, PSEOF):
+            shutil.move(path, os.path.join(os.getcwd(), 'nopdfs', filename))
+            return
         # except:
-        #     print(fp.name + 'Do not provide txt conversion',
+        #     print(filename)
+        # 提供初始化密码
+        # 如果没有密码 就创建一个空的字符串
+        try:
+            doc.initialize()
+        except PDFEncryptionError:
+            newp = path.split('.')[0] + '-t' + '.pdf'
+            os.rename(path, newp)
+            call('qpdf --password=%s --decrypt %s %s' % (
+                '', newp, path), shell=True)
+            os.remove(newp)
+        try:
+            if not doc.is_extractable:
+                raise PDFTextExtractionNotAllowed
+        except (PDFTextExtractionNotAllowed, AttributeError):
+            shutil.move(path, os.path.join(os.getcwd(), 'nopdfs', filename))
+            return
+        else:
+            # try:
+            rsrcmgr = PDFResourceManager()
+            # 创建一个PDF设备对象
+            laparams = LAParams()
+            device = PDFPageAggregator(rsrcmgr, laparams=laparams)
+            # 创建一个PDF解释器对象
+            interpreter = PDFPageInterpreter(rsrcmgr, device)
+            # except:
+            #     print(fp.name + 'Do not provide txt conversion',
+            #           'change to Tencent ocr identification')
+            #     print('Start converting', fp.name, 'to image')
+            #     txt = imgtotxt(convert_pdf_to_jpg(filename))
+            # # except Warning:
+            # #     print(fp.name, '捕获到警告', '改用腾讯ocr识别')
+            # #     print('开始将', fp.name, '转换为图片')
+            # #     txt = imgtotxt(convert_pdf_to_jpg(fp.name))
+            #
+            # #     os.remove(path)
+            # #     return
+            # # except AttributeError:
+            # #     os.remove(path)
+            # # else:
+            # try:
+            # 创建PDf 资源管理器 来管理共享资源
+            # except PDFSyntaxError:
+            #     shutil.move(path, os.path.join(os.getcwd(), 'nopdfs', filename))
+            #     return
+            # try:
+            #     os.remove(r'./pdfs/' + codename + '/' + filename.replace(
+            #         'pdf', 'txt'))
+            # except FileNotFoundError:
+            #     pass
+            # 循环遍历列表，每次处理一个page的内容
+        # except AttributeError:
+        #     print(filename + 'Do not provide txt conversion',
         #           'change to Tencent ocr identification')
-        #     print('Start converting', fp.name, 'to image')
+        #     print('Start converting', filename, 'to image')
         #     txt = imgtotxt(convert_pdf_to_jpg(filename))
-        # # except Warning:
-        # #     print(fp.name, '捕获到警告', '改用腾讯ocr识别')
-        # #     print('开始将', fp.name, '转换为图片')
-        # #     txt = imgtotxt(convert_pdf_to_jpg(fp.name))
-        #
-        # #     os.remove(path)
-        # #     return
-        # # except AttributeError:
-        # #     os.remove(path)
-        # # else:
-        # try:
-        # 创建PDf 资源管理器 来管理共享资源
-        # except PDFSyntaxError:
-        #     shutil.move(path, os.path.join(os.getcwd(), 'nopdfs', filename))
-        #     return
-        # try:
-        #     os.remove(r'./pdfs/' + codename + '/' + filename.replace(
-        #         'pdf', 'txt'))
-        # except FileNotFoundError:
-        #     pass
-        # 循环遍历列表，每次处理一个page的内容
-    # except AttributeError:
-    #     print(filename + 'Do not provide txt conversion',
-    #           'change to Tencent ocr identification')
-    #     print('Start converting', filename, 'to image')
-    #     txt = imgtotxt(convert_pdf_to_jpg(filename))
-    txt = ""
-    try:
-        for page in doc.get_pages():  # doc.get_pages() 获取page列表
-            interpreter.process_page(page)
-            # 接受该页面的LTPage对象
-            layout = device.get_result()
-            """ 
-            这里layout是一个LTPage对象 里面存放着 这个page解析出的各种对象 一般包括LTTextBox, LTFigure, 
-            LTImage, LTTextBoxHorizontal 等等 想要获取文本就获得对象的text属性
-            """
-            for x in layout:
-                if isinstance(x, LTTextBoxHorizontal):
-                    # with open(r'./pdfs/test.txt', 'a') as f:
-                    results = x.get_text()
-                    #     # print(results)
-                    #     f.write(results + '\n')
-                    txt += results
-    except (Warning, PSEOF, PDFSyntaxError, KeyError, TypeError):
-        shutil.move(path, os.path.join(os.getcwd(), 'nopdfs', filename))
-        return
+        txt = ""
+        try:
+            for page in doc.get_pages():  # doc.get_pages() 获取page列表
+                interpreter.process_page(page)
+                # 接受该页面的LTPage对象
+                layout = device.get_result()
+                """ 
+                这里layout是一个LTPage对象 里面存放着 这个page解析出的各种对象 一般包括LTTextBox, LTFigure, 
+                LTImage, LTTextBoxHorizontal 等等 想要获取文本就获得对象的text属性
+                """
+                for x in layout:
+                    if isinstance(x, LTTextBoxHorizontal):
+                        # with open(r'./pdfs/test.txt', 'a') as f:
+                        results = x.get_text()
+                        #     # print(results)
+                        #     f.write(results + '\n')
+                        txt += results
+        except (Warning, PSEOF, PDFSyntaxError, KeyError, TypeError):
+            shutil.move(path, os.path.join(os.getcwd(), 'nopdfs', filename))
+            return
             # for x in layout:
             #     if isinstance(x, LTTextBoxHorizontal):
             #         with open(r'./pdfs/' + codename + '/' + filename.replace(
@@ -252,12 +300,14 @@ def parse(filename):
             #             results = x.get_text()
             #             # print(results)
             #             f.write(results + '\n')
-        # print('转换完成:', f.name)
-    # except Warning:
-    #     print(filename + 'Do not provide txt conversion',
-    #           'change to Tencent ocr identification')
-    #     print('Start converting', filename, 'to image')
-    #     txt = imgtotxt(convert_pdf_to_jpg(filename))
+            # print('转换完成:', f.name)
+        # except Warning:
+        #     print(filename + 'Do not provide txt conversion',
+        #           'change to Tencent ocr identification')
+        #     print('Start converting', filename, 'to image')
+        #     txt = imgtotxt(convert_pdf_to_jpg(filename))
+    if type == 'ocr':
+        txt = imgtotxt(pdf_to_jpg(path))
 
     CVnum = SBnum = TLnum = SLnum = QEnum = AMnum = GPnum = 0
     # CVindex = SBindex = TLindex = SLindex = QEindex = AMindex = GPindex = 0
@@ -409,7 +459,7 @@ def delpdf():
 #             print(codename + ' 文件夹pdf转换txt结束')
 #     print('All pdf analysis is complete!')
 # 18164
-def run():
+def run(type):
     # import random  # test
     # pdf文件名
     # with open("res.csv", "w") as csvfile:
@@ -427,10 +477,10 @@ def run():
     # pdfs = ['000001_2011-01-01.pdf']
     print('Start analysis')
     for pdfname in pdfs:
-        if pdfname[-3:] == 'pdf':
+        if pdfname[-3:] == 'pdf' or pdfname[-3:] == 'PDF':
             # res.append(parse(pdfname))
             print('start', pdfname)
-            row = parse(pdfname)
+            row = parse(pdfname, type=type)
             if row is not None:
                 with open("res.csv", "a") as csvfile:
                     writer = csv.writer(csvfile)
@@ -485,4 +535,6 @@ def runall():
 if __name__ == '__main__':
     # pdfocr()
     # delpdf()
-    runall()
+    # runall()
+    run(type='ocr')
+    # pdf_to_jpg('/Users/apple/code/spiders/policy/pdfs/000001_2011-01-01.PDF')

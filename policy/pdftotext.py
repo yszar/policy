@@ -102,21 +102,22 @@ def pdf_to_jpg(filename):
             image = Image2.open(img)
         except OSError:
             continue
-        x, y = image.size
-        background = Image2.new('RGBA', image.size, (255, 255, 255))
-        try:
-            background.paste(image, (0, 0, x, y), image)
-            image = background.convert('RGB')
-        except:
-            image = image.convert('RGBA')
-            background.paste(image, (0, 0, x, y), image)
-            image = background.convert('RGB')
-        title = img.split('.')[0]
-        name = title + '.jpg'
-        image.save(name)
-        os.remove(img)
-        # name = "%s/%s" % (static_host, name)
-        jpg_list.append(name)
+        else:
+            x, y = image.size
+            background = Image2.new('RGBA', image.size, (255, 255, 255))
+            try:
+                background.paste(image, (0, 0, x, y), image)
+                image = background.convert('RGB')
+            except:
+                image = image.convert('RGBA')
+                background.paste(image, (0, 0, x, y), image)
+                image = background.convert('RGB')
+            title = img.split('.')[0]
+            name = title + '.jpg'
+            image.save(name)
+            os.remove(img)
+            # name = "%s/%s" % (static_host, name)
+            jpg_list.append(name)
     return jpg_list
 
 

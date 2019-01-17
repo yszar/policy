@@ -242,7 +242,7 @@ def parse(filename):
                     #     # print(results)
                     #     f.write(results + '\n')
                     txt += results
-    except (Warning, PSEOF, PDFSyntaxError, KeyError):
+    except (Warning, PSEOF, PDFSyntaxError, KeyError, TypeError):
         shutil.move(path, os.path.join(os.getcwd(), 'nopdfs', filename))
         return
             # for x in layout:

@@ -18,6 +18,7 @@ from subprocess import call
 # from functools import cmp_to_key
 # from wand.image import Image
 # from PIL import Image as PI
+# from wand.exceptions import *
 from qqai.vision.ocr import GeneralOCR
 from pdfminer.pdfparser import PDFParser, PDFDocument
 from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
@@ -79,7 +80,10 @@ def pdf_to_jpg(filename):
         # 如果頁數超過1頁，生成的文件名會依次加上頁碼數
         with img.convert('png') as converted:
             path = os.path.join(imgpath, '%s.png') % title
-            converted.save(filename=path)
+            try:
+                converted.save(filename=path)
+            except Exception:
+                os.remove(path)
     image_list = []
     if length == 1:
         path = os.path.join(os.getcwd(), 'policy', 'image', '%s.png') % title

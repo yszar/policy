@@ -98,7 +98,10 @@ def pdf_to_jpg(filename):
             image_list.append(path)
     jpg_list = []
     for img in image_list:
-        image = Image2.open(img)
+        try:
+            image = Image2.open(img)
+        except OSError:
+            continue
         x, y = image.size
         background = Image2.new('RGBA', image.size, (255, 255, 255))
         try:

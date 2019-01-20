@@ -504,24 +504,41 @@ def run(type):
         else:
             continue
     # # 降序
-    # # res_sort = sorted(res, key=lambda x: x[1])
-    # res_good = []
-    # for cn in codes:
-    #     code_good = code_list = sorted(
-    #         [x for c, x in enumerate(res) if x[0].find(cn) != -1])
-    #     if len(code_list) >= 2:
-    #         for n in range(len(code_list) - 1):
-    #             diff = int(code_list[n + 1][1][:4]) - int(
-    #                 code_list[n][1][:4])
-    #             if diff > 1:
-    #                 for d in range(diff - 1):
-    #                     code_good.insert(n + d + 1, code_good[n + d])
-    #                     code_good[n + d + 1] = list(code_good[n + d + 1])
-    #                     code_good[n + d + 1][1] = str(
-    #                         int(code_good[n + d + 1][1][:4]) + 1)
-    #                     tuple(code_good[n + d + 1])
-    #     for r in code_good:
-    #         res_good.append(r)
+    # res_sort = sorted(res, key=lambda x: x[1])
+
+
+def goodcsv():
+    pdfs = os.listdir('goodpdfs')
+    # pdfs = pdfs[:10]
+    # pdfs = random.sample(pdfs, 20)
+    # 去重后的code列表
+    codes = set([code[:6] for code in pdfs if code[-3:] == 'pdf' or code[-3:] == 'PDF'])
+    res_list = []
+    with open(r'res.csv', 'r') as res:
+        ress = csv.reader(res)
+        for row in ress:
+            res_list.append(row)
+    res = []
+    res_good = []
+    for cn in codes:
+        code_good = code_list = sorted(
+            [x for c, x in enumerate(res_list) if x[0].find(cn) != -1])
+        if len(code_list) >= 2:
+            for n in range(len(code_list) - 1):
+                diff = int(code_list[n + 1][1][:4]) - int(
+                    code_list[n][1][:4])
+                if diff > 1:
+                    for d in range(diff - 1):
+                        code_good.insert(n + d + 1, code_good[n + d])
+                        code_good[n + d + 1] = list(code_good[n + d + 1])
+                        code_good[n + d + 1][1] = str(
+                            int(code_good[n + d + 1][1][:4]) + 1)
+                        tuple(code_good[n + d + 1])
+        for r in code_good:
+            res_good.append(r)
+    with open('res1.csv', 'w') as res1:
+        writer = csv.writer(res1)
+        writer.writerows(res_good)
     # print('All pdf analysis is complete!')
     #
     # # try:
@@ -547,5 +564,6 @@ if __name__ == '__main__':
     # pdfocr()
     # delpdf()
     # runall()
-    run(type='ocr')
+    # run(type='ocr')
+    goodcsv()
     # pdf_to_jpg('/Users/apple/code/spiders/policy/pdfs/000001_2011-01-01.PDF')
